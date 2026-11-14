@@ -29,31 +29,34 @@ const items = [
 
 export function FAQ() {
   return (
-    <section id="faq" className="section-shell relative z-10">
+    <section id="faq" className="section-shell">
       <Reveal>
-        <div className="flex flex-col gap-10 md:gap-12 lg:flex-row lg:gap-16">
-          <h2 className="section-display text-balance lg:w-[min(42%,22rem)] lg:shrink-0">
+        <p className="kicker">
+          04 <span className="text-white/25">//</span> questions
+        </p>
+        <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:gap-16">
+          <h2 className="section-display text-balance lg:w-[min(36%,18rem)] lg:shrink-0">
             <span className="section-display-muted block">Frequently</span>
             <span className="section-display-strong block">asked questions</span>
           </h2>
-          <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <div className="min-w-0 flex-1 border-t border-white/[0.08]">
             {items.map((item, index) => (
               <details
                 key={item.q}
                 name="stack-faq"
-                className="faq-pill faq-item rounded-[16px] px-4 py-3.5 sm:px-5 sm:py-4"
+                className="faq-item border-b border-white/[0.08] py-4"
                 open={index === 0}
               >
-                <summary className="group flex w-full cursor-pointer items-center gap-4 text-left text-[16px] leading-[1.5] break-words text-ink">
-                  <h3 className="min-w-0 flex-1 font-[family-name:var(--font-inter-tight)] text-[16px] font-medium">
+                <summary className="group flex w-full cursor-pointer items-center gap-4 text-left">
+                  <h3 className="min-w-0 flex-1 font-[family-name:var(--font-inter-tight)] text-[16px] font-medium tracking-[-0.02em] text-ink">
                     {item.q}
                   </h3>
                   <span
-                    className="faq-toggle flex size-6 shrink-0 items-center justify-center rounded-[8px] text-[16px] leading-none text-[#3cb86a] transition-colors duration-200 group-hover:bg-green-tint group-hover:text-[#7ae0a4]"
+                    className="faq-toggle font-mono text-[16px] leading-none text-[#7dffc3]"
                     aria-hidden
                   />
                 </summary>
-                <p className="pt-3 pr-0 pb-0 text-[14px] leading-[1.5] text-[#8A8F98] sm:pr-8 sm:pt-4">
+                <p className="max-w-xl pt-3 text-[14px] leading-[1.6] text-[#8aa396]">
                   {item.a}
                 </p>
               </details>
