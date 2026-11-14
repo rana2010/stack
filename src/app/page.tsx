@@ -1,10 +1,8 @@
-import { Ecosystem } from "@/components/Ecosystem";
 import { FAQ } from "@/components/FAQ";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { ProductCards } from "@/components/ProductCards";
-import { RepeatUse } from "@/components/RepeatUse";
 import { StagesSection } from "@/components/StagesSection";
 
 export default function Home() {
@@ -18,8 +16,6 @@ export default function Home() {
         <Hero />
         <ProductCards />
         <StagesSection />
-        <Ecosystem />
-        <RepeatUse />
         <FAQ />
       </main>
       <Footer />

@@ -4,10 +4,9 @@ import { useEffect, useRef } from "react";
 
 const GLYPHS = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉ0123456789";
 const TRAIL = 12;
-const STEP_MS = 70;
 
-function glyph() {
-  return GLYPHS[(Math.random() * GLYPHS.length) | 0];
+function pickGlyph(glyphs: string) {
+  return glyphs[(Math.random() * glyphs.length) | 0];
 }
 
 const MIRROR_SLOTS = [0.58, 0.68, 0.78, 0.87, 0.95];
@@ -16,9 +15,17 @@ const MIRROR_REACH = [0.42, 0.55, 0.68, 0.82, 1];
 export function MatrixRain({
   className,
   mode = "rail",
+  glyphs = GLYPHS,
+  strength = 1,
+  stepMs = 70,
+  every = mode === "field" ? 3 : 1,
 }: {
   className?: string;
   mode?: "rail" | "field" | "mirror" | "pill";
+  glyphs?: string;
+  strength?: number;
+  stepMs?: number;
+  every?: number;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -66,17 +73,17 @@ export function MatrixRain({
         mode === "pill" ? (i * 3) % 14 : (i * 7) % 20,
       );
       trails = Array.from({ length: columns }, () =>
-        Array.from({ length: TRAIL }, glyph),
+        Array.from({ length: TRAIL }, () => pickGlyph(glyphs)),
       );
       pile = Array.from({ length: columns }, () =>
-        Array.from({ length: pileLayers }, glyph),
+        Array.from({ length: pileLayers }, () => pickGlyph(glyphs)),
       );
       streams = Array.from({ length: columns }, (_, i) =>
         Array.from({ length: streamsPerCol }, (_, s) => ((i + s * 7) % 16)),
       );
       streamTrails = Array.from({ length: columns }, () =>
         Array.from({ length: streamsPerCol }, () =>
-          Array.from({ length: TRAIL }, glyph),
+          Array.from({ length: TRAIL }, () => pickGlyph(glyphs)),
         ),
       );
       canvas.width = Math.floor(Math.max(width, 1) * dpr);
@@ -88,7 +95,7 @@ export function MatrixRain({
 
     const draw = (now: number) => {
       raf = window.requestAnimationFrame(draw);
-      if (now - last < STEP_MS) return;
+      if (now - last < stepMs) return;
       last = now;
 
       ctx.clearRect(0, 0, width, height);
@@ -109,7 +116,7 @@ export function MatrixRain({
         for (let i = 0; i < columns; i += 1) {
           const x = i * cell + 1;
           if (Math.random() < 0.08) {
-            pile[i][(Math.random() * 4) | 0] = glyph();
+            pile[i][(Math.random() * 4) | 0] = pickGlyph(glyphs);
           }
 
           for (let layer = 0; layer < pileLayers; layer += 1) {
@@ -125,7 +132,7 @@ export function MatrixRain({
 
           for (let s = 0; s < streamsPerCol; s += 1) {
             streamTrails[i][s].pop();
-            streamTrails[i][s].unshift(glyph());
+            streamTrails[i][s].unshift(pickGlyph(glyphs));
 
             for (let t = 0; t < TRAIL; t += 1) {
               const dist = (streams[i][s] - t) * cell;
@@ -156,15 +163,15 @@ export function MatrixRain({
       const horizon = mode === "mirror" ? height * 0.58 : height;
 
       for (let i = 0; i < columns; i += 1) {
-        if (mode === "field" && i % 3 !== 0) continue;
+        if (every > 1 && i % every !== 0) continue;
 
         trails[i].pop();
-        trails[i].unshift(glyph());
+        trails[i].unshift(pickGlyph(glyphs));
 
         const x =
           mode === "mirror" ? width * MIRROR_SLOTS[i] : i * cell + 2;
         const reach = mode === "mirror" ? horizon * MIRROR_REACH[i] : height;
-        const strength =
+        const column =
           mode === "mirror" ? 0.45 + MIRROR_REACH[i] * 0.55 : 1;
 
         for (let t = 0; t < TRAIL; t += 1) {
@@ -176,11 +183,12 @@ export function MatrixRain({
           if (mode !== "mirror" && (y < -cell || y > height + cell)) continue;
 
           const fade = 1 - t / TRAIL;
-          const alpha = (t === 0 ? 0.28 : 0.04 + fade * 0.12) * strength;
+          const alpha =
+            (t === 0 ? 0.28 : 0.04 + fade * 0.12) * column * strength;
           ctx.fillStyle =
             t === 0
-              ? `rgba(196, 232, 208, ${alpha})`
-              : `rgba(28, 132, 72, ${alpha})`;
+              ? `rgba(214, 255, 232, ${alpha})`
+              : `rgba(61, 214, 140, ${alpha})`;
           ctx.fillText(trails[i][t], x, y);
 
           if (mode === "mirror") {
@@ -189,8 +197,8 @@ export function MatrixRain({
               alpha * 0.38 * (1 - (horizon - y) / (reach + 1));
             ctx.fillStyle =
               t === 0
-                ? `rgba(196, 232, 208, ${rAlpha})`
-                : `rgba(28, 132, 72, ${rAlpha})`;
+                ? `rgba(214, 255, 232, ${rAlpha})`
+                : `rgba(61, 214, 140, ${rAlpha})`;
             ctx.fillText(trails[i][t], x, reflected);
           }
         }
@@ -215,7 +223,7 @@ export function MatrixRain({
       window.cancelAnimationFrame(raf);
       observer.disconnect();
     };
-  }, [mode]);
+  }, [every, glyphs, mode, stepMs, strength]);
 
   return (
     <div ref={wrapRef} aria-hidden className={className}>

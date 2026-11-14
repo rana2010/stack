@@ -1,24 +1,39 @@
 import { Logo } from "./Logo";
 
+const links = [
+  { href: "#products", label: "Offer" },
+  { href: "#layers", label: "Stages" },
+  { href: "#faq", label: "FAQ" },
+];
+
 export function Header() {
   return (
-    <header
-      className="fixed inset-x-0 top-0 z-50 overflow-hidden border-b border-white/[0.06] font-[family-name:var(--font-inter-tight)] backdrop-blur-xl backdrop-saturate-150"
-      style={{
-        background: "rgb(0 0 0 / 0.72)",
-        boxShadow: "0 16px 36px rgb(0 0 0 / 0.38)",
-      }}
-    >
-      <div className="chrome-bloom pointer-events-none absolute inset-0" aria-hidden />
-      <div className="relative flex h-14 items-center px-4 sm:h-16 sm:px-6 md:px-8 lg:px-10">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.06] bg-black/75 backdrop-blur-md">
+      <div className="flex h-14 items-center justify-between px-4 sm:h-16 sm:px-6 md:px-8 lg:px-10">
         <a
           href="#top"
-          className="flex items-center gap-2 text-ink"
+          className="flex items-center gap-2.5 text-ink"
           aria-label="stack by noon"
         >
-          <Logo className="h-4 w-5" />
-          <span className="text-[12px] font-medium leading-none">stack by noon</span>
+          <Logo className="h-3.5 w-5 text-[#7dffc3]" />
+          <span className="font-[family-name:var(--font-inter-tight)] text-[13px] font-medium tracking-[-0.03em]">
+            stack
+          </span>
+          <span className="font-mono text-[11px] tracking-[0.16em] text-[#8aa396] uppercase">
+            noon
+          </span>
         </a>
+        <nav className="flex items-center gap-3 sm:gap-6" aria-label="Page">
+          {links.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="font-mono text-[11px] tracking-[0.12em] text-[#8aa396] uppercase transition-colors hover:text-[#7dffc3] sm:tracking-[0.16em]"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
       </div>
     </header>
   );
